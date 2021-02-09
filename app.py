@@ -10,11 +10,17 @@ from werkzeug.datastructures import MultiDict
 app = Flask(__name__)
 
 # CONFIG MYSQL ------------------------------------------------
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Chopper11'
-app.config['MYSQL_DB'] = 'py_todolist'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+if os.environ.get('ENV') == 'production':
+    app.config['DEBUG'] = False
+    app.config['MYSQL_DB'] = os.environ.get('DATABASE.URL')
+else
+    app.config['DEBUG'] = True
+    app.config['MYSQL_HOST'] = 'localhost'
+    app.config['MYSQL_USER'] = 'root'
+    app.config['MYSQL_PASSWORD'] = 'Chopper11'
+    app.config['MYSQL_DB'] = 'py_todolist'
+    app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 mysql = MySQL(app)
 
