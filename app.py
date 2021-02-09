@@ -8,6 +8,7 @@ from wtforms_components import DateTimeField
 from werkzeug.datastructures import MultiDict
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 # CONFIG MYSQL ------------------------------------------------
 if os.environ.get('ENV') == 'production':
@@ -20,7 +21,6 @@ else
     app.config['MYSQL_PASSWORD'] = 'Chopper11'
     app.config['MYSQL_DB'] = 'py_todolist'
     app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 
 mysql = MySQL(app)
 
