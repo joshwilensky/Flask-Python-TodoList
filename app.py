@@ -4,15 +4,16 @@ from flask_mysqldb import MySQL
 from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
-from wtforms_components import DateTimeField
-from werkzeug.datastructures import MultiDict
+
 
 app = Flask(__name__)
 
-if os.environ.get('ENV') == 'production':
-    app.config.from_object('config.ProductionConfig')
-else:
-    app.config.from_object('config.DevelopmentConfig')
+# CONFIG MYSQL ------------------------------------------------
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Chopper11'
+app.config['MYSQL_DB'] = 'py_todolist'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
