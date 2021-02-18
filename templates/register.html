@@ -1,9 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Register</h1>
+
+<h1 style="text-align: center; margin-top:20px">Registration Form</h1>
 {% from "includes/_formhelpers.html" import render_field %}
-<form method="POST" action="">
+<form style="margin-left:30%; margin-right:30%" method="POST" action="">
     <div class="form-group">
         {{render_field(form.name, class_="form-control")}}
     </div>

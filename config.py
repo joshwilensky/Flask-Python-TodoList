@@ -1,12 +1,10 @@
-import os
-
-class Config():
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    DEBUG = True
-
-class ProductionConfig(Config):
-    MYSQL_DB = os.environ.get('DATABASE.URL')
+class Config(object):
     DEBUG = False
+    TESTING = False
 
-class DevelopmentConfig(Config):
-    MYSQL_DB = 'py_todolist'
+class Development(Config):
+    DEBUG = True
+    DATABASE = 'development_db'
+
+class Production(Config):
+    DATABASE = 'production_db'

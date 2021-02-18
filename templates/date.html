@@ -1,0 +1,9 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Edit Date</h1>
+<form method="POST" action="{{url_for('date', id=task.id)}}">
+    <input type="date" name="date" value="{{task.date}}">
+    <input type="submit" value="Edit Date">
+</form>
+{% endblock %}

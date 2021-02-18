@@ -1,12 +1,14 @@
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging
 from task import Tasks
 from flask_mysqldb import MySQL
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from wtforms import Form, StringField, widgets, PasswordField, validators, DateField
 from passlib.hash import sha256_crypt
 from functools import wraps
-
+from flask_bootstrap import Bootstrap
+import datetime
 
 app = Flask(__name__)
+Bootstrap(app)
 
 # CONFIG MYSQL ------------------------------------------------
 app.config['MYSQL_HOST'] = 'localhost'
@@ -53,6 +55,7 @@ def register():
 # LOGIN PAGE --------------------------------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error = None
     if request.method == 'POST':
         username = request.form['username']
         password_candidate = request.form['password']
@@ -98,51 +101,52 @@ def logout():
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
 
-# =============================================================  
+# =============================================================
 def find_task(task_id):
     return [task for task in todos if task.id == task_id][0]
 
-# HOME PAGE -----------------------------------------------
+# FRONT PAGE -----------------------------------------------
 @app.route('/home')
 def home():
     return render_template('home.html')
 
+# MAIN PAGE -----------------------------------------------
 @app.route('/')
+@is_logged_in
 def root():
     return redirect(url_for('index'))
 
-# MAIN PAGE -----------------------------------------------
-@app.route('/tasks', methods=['GET', 'POST'])
+# CREATE TASK -----------------------------------------------
+@app.route('/tasks', methods=['GET', 'POST', 'DELETE'])
+@is_logged_in
 def index():
     if request.method == 'POST':
-        new_task = Tasks(request.form['category'], request.form['tasks'])
-        todos.append(new_task)
+        found_task = Tasks(request.form['tasks'], request.form['date'])
+        todos.append(found_task)
         return redirect(url_for('index'))
     return render_template('main.html', todos=todos)
 
-# CREATE TASK -----------------------------------------------
-@app.route('/tasks/new')
-def new():
-    return render_template('new.html')
-
 # READ TASK -------------------------------------------------
-@app.route('/tasks/<int:id>/', methods=['GET', 'POST', 'DELETE'])
+@app.route('/tasks/<int:id>/', methods=['GET', 'POST'])
+@is_logged_in
 def show(id):
     found_task = find_task(id)
     if request.method == 'POST':
-        found_task.category = request.form['category']
         found_task.tasks = request.form['tasks']
+        found_task.date = request.form['date']
         return redirect(url_for('index'))
-    return render_template('show.html', task=found_task)
+    return render_template('main.html', task=found_task)
 
 # UPDATE TASK -------------------------------------------------
 @app.route('/tasks/<int:id>/edit')
+@is_logged_in
 def edit(id):
     found_task = find_task(id)
     return render_template('edit.html', task=found_task)
 
 # DELETE TASK -----------------------------------------------
 @app.route('/tasks/<int:id>/delete', methods=['GET', 'POST'])
+@is_logged_in
 def delete(id):
     found_task = find_task(id)
     if request.method == 'POST':
@@ -150,6 +154,23 @@ def delete(id):
         return redirect(url_for('index'))
     return render_template('delete.html', task=found_task)
 
+
+
+
+@app.route('/tasks/<int:id>/complete', methods=['GET', 'POST'])
+@is_logged_in
+def complete(id):
+    found_task = find_task(id)
+    if request.method == 'POST':
+        todos.append(found_task)
+        return redirect(url_for('index'))
+    return render_template('complete.html', task=found_task)
+
+@app.route('/tasks/<int:id>/date')
+@is_logged_in
+def date(id):
+    found_task = find_task(id)
+    return render_template('date.html', task=found_task)
 
 if __name__ == '__main__':
     app.secret_key='secret123'

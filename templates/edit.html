@@ -1,12 +1,18 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Edit Task</h1>
+
 <form method="POST" action="{{url_for('show', id=task.id)}}">
-    <input type="text" name="category" value="{{task.category}}">
-    <input type="text" name="tasks" value="{{task.tasks}}">
-    <input type="submit" value="Edit Task">
+    <h2 style="text-align: center; margin-top: 2%">Edit Task</h2>
+
+    <div class="row" style="place-content:center; margin-top:1%">
+        <div class="col-md-3">
+            <input type="text" name="tasks" id="myInput" class="form-control" value="{{task.tasks}}">
+        </div>
+        <div class="col-md-2">
+            <input type="date" name="date" value="{{task.date}}" class="form-control">
+        </div>
+        <input type="submit" value="Edit Task" class="btn btn-primary">
+    </div>
 </form>
-
-
 {% endblock %}
